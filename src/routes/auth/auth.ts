@@ -1,5 +1,5 @@
 //gsk dipake
-// // src/routes/auth.ts
+// // src/routes/auth/auth.ts
 // import express from "express";
 // import { register, login } from "../controllers/authController";
 

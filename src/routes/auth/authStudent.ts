@@ -1,9 +1,9 @@
-//src/routes/authStudent.ts
+//src/routes/auth/authStudent.ts
 import express from "express";
 import {
   registerStudent,
   loginStudent,
-} from "../controllers/authStudentController";
+} from "../../controllers/auth/authStudentController";
 
 const router = express.Router();
 

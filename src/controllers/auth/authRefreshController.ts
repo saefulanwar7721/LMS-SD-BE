@@ -1,8 +1,8 @@
-// src/controllers/authRefreshController.ts
+// src/controllers/auth/authRefreshController.ts
 import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
-import redisClient from "../config/redis";
-import { generateAccessToken, generateRefreshToken } from "../utils/auth";
+import redisClient from "../../config/redis";
+import { generateAccessToken, generateRefreshToken } from "../../utils/auth";
 
 const REFRESH_SECRET = process.env.REFRESH_SECRET || "superrefreshsecret";
 

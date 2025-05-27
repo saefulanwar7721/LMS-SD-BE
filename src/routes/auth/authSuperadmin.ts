@@ -1,9 +1,9 @@
-//src/routes/authSuperAdmin.ts
+//src/routes/auth/authSuperAdmin.ts
 import express from "express";
 import {
   registerSuperAdmin,
   loginSuperAdmin,
-} from "../controllers/authSuperAdminController";
+} from "../../controllers/auth/authSuperAdminController";
 
 const router = express.Router();
 

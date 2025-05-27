@@ -1,9 +1,9 @@
-// src/routes/authHomeroomTeacher.ts
+// src/routes/auth/authHomeroomTeacher.ts
 import express from "express";
 import {
   registerHomeroomTeacher,
   loginHomeroomTeacher,
-} from "../controllers/authHomeroomTeacherController";
+} from "../../controllers/auth/authHomeroomTeacherController";
 
 const router = express.Router();
 

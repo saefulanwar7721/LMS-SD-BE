@@ -1,14 +1,14 @@
-// src/controllers/authSchoolController.ts
+// src/controllers/auth/authSchoolController.ts
 import { Request, Response } from "express";
-import School from "../models/School";
-import User from "../models/User";
-import Admin from "../models/Admin";
+import School from "../../models/School";
+import User from "../../models/User";
+import Admin from "../../models/Admin";
 import {
   hashPassword,
   comparePassword,
   generateAccessToken,
   generateRefreshToken,
-} from "../utils/auth";
+} from "../../utils/auth";
 
 export const registerSchoolWithAdmin = async (
   req: Request,

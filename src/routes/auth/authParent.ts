@@ -1,9 +1,9 @@
-// src/routes/authParent.ts
+// src/routes/auth/authParent.ts
 import express from "express";
 import {
   registerParent,
   loginParent,
-} from "../controllers/authParentController";
+} from "../../controllers/auth/authParentController";
 
 const router = express.Router();
 

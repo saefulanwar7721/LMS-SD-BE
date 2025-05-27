@@ -1,3 +1,4 @@
+//src/models/SuperAdmin.ts
 import { Model, DataTypes, Optional } from "sequelize";
 import sequelize from "../config/database";
 

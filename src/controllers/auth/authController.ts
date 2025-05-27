@@ -1,5 +1,5 @@
 //gak dipake
-// // src/controllers/authController.ts
+// // src/controllers/auth/authController.ts
 // import { Request, Response } from "express";
 // import User from "../models/User";
 // import { comparePassword, generateToken, hashPassword } from "../utils/auth";

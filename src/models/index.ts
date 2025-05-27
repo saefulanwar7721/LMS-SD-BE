@@ -1,3 +1,4 @@
+//src/models/index.ts
 import School from "./School";
 import User from "./User";
 import Teacher from "./Teacher";
@@ -6,6 +7,7 @@ import Student from "./Student";
 import Parent from "./Parent";
 import Admin from "./Admin";
 import SuperAdmin from "./SuperAdmin";
+import Class from "./Class";
 
 const db = {
   School,
@@ -16,6 +18,7 @@ const db = {
   Parent,
   Admin,
   SuperAdmin,
+  Class,
 };
 
 export default db;

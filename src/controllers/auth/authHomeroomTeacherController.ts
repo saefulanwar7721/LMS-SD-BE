@@ -1,20 +1,27 @@
-// src/controllers/authTeacherController.ts
+// src/controllers/auth/authHomeroomTeacherController.ts
 import { Request, Response } from "express";
-import User from "../models/User";
-import Teacher from "../models/Teacher";
-import School from "../models/School";
+import User from "../../models/User";
+import HomeroomTeacher from "../../models/HomeroomTeacher";
+import School from "../../models/School";
 import {
   hashPassword,
   comparePassword,
   generateAccessToken,
   generateRefreshToken,
-} from "../utils/auth";
+} from "../../utils/auth";
+import Class from "../../models/Class";
 
-// 🚀 Register Guru (hanya bisa dilakukan oleh admin sekolah)
-export const registerTeacher = async (req: Request, res: Response) => {
+// 🚀 Register Wali Kelas (hanya admin sekolah)
+export const registerHomeroomTeacher = async (req: Request, res: Response) => {
   try {
-    const { school_id, name, email, password, nip, gender, birth_date } =
+    const { school_id, name, email, password, class_id, academic_year } =
       req.body;
+
+    const kelas = await Class.findByPk(class_id);
+    if (!kelas) {
+      res.status(404).json({ message: "Kelas tidak ditemukan" });
+      return;
+    }
 
     const school = await School.findByPk(school_id);
     if (!school) {
@@ -31,54 +38,54 @@ export const registerTeacher = async (req: Request, res: Response) => {
     const password_hash = await hashPassword(password);
     const newUser = await User.create({
       school_id,
-      role: "guru",
+      role: "wali_kelas",
       name,
       email,
       password_hash,
     });
 
-    const newTeacher = await Teacher.create({
+    const newHomeroomTeacher = await HomeroomTeacher.create({
       school_id,
       user_id: newUser.id,
-      nip,
-      gender,
-      birth_date,
+      class_id,
+      academic_year,
     });
 
     // 🔐 Generate access token & refresh token
     const accessToken = generateAccessToken({
       id: newUser.id,
-      role: "guru",
+      role: "wali_kelas",
       school_id,
     });
     const { token: refreshToken, tokenId } = generateRefreshToken({
       id: newUser.id,
-      role: "guru",
+      role: "wali_kelas",
       school_id,
     });
 
     res.status(201).json({
-      message: "Guru berhasil didaftarkan",
-      teacher: newTeacher,
+      message: "Wali kelas berhasil didaftarkan",
+      homeroom_teacher: newHomeroomTeacher,
       accessToken,
       refreshToken,
     });
   } catch (err) {
-    console.error("Register Teacher Error:", err);
-    res.status(500).json({ message: "Gagal mendaftarkan guru", error: err });
+    console.error("Register HomeroomTeacher Error:", err);
+    res
+      .status(500)
+      .json({ message: "Gagal mendaftarkan wali kelas", error: err });
   }
 };
 
-// 🔐 Login Guru
-export const loginTeacher = async (req: Request, res: Response) => {
+// 🔐 Login Wali Kelas
+export const loginHomeroomTeacher = async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
 
     const user = await User.findOne({
-      where: { email, role: "guru" },
-      include: [{ model: Teacher }],
+      where: { email, role: "wali_kelas" },
+      include: [{ model: HomeroomTeacher, as: "HomeroomTeacher" }],
     });
-
     if (!user || !user.password_hash) {
       res.status(401).json({ message: "Email atau password salah" });
       return;
@@ -102,16 +109,16 @@ export const loginTeacher = async (req: Request, res: Response) => {
       school_id: user.school_id,
     });
 
-    const teacher = (user as any).Teacher;
+    const homeroom_teacher = (user as any).HomeroomTeacher;
 
     res.json({
-      message: "Login guru sukses",
+      message: "Login wali kelas sukses",
       accessToken,
       refreshToken,
-      teacher,
+      homeroom_teacher,
     });
   } catch (err) {
-    console.error("Login Teacher Error:", err);
-    res.status(500).json({ message: "Login guru gagal", error: err });
+    console.error("Login HomeroomTeacher Error:", err);
+    res.status(500).json({ message: "Login wali kelas gagal", error: err });
   }
 };

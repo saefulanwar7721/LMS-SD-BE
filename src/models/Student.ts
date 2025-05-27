@@ -3,6 +3,7 @@ import { Model, DataTypes } from "sequelize";
 import sequelize from "../config/database";
 import School from "./School";
 import User from "./User";
+import Class from "./Class";
 
 class Student extends Model {}
 
@@ -45,5 +46,8 @@ Student.belongsTo(School, { foreignKey: "school_id" });
 
 User.hasOne(Student, { foreignKey: "user_id" });
 Student.belongsTo(User, { foreignKey: "user_id" });
+
+Class.hasMany(Student, { foreignKey: "class_id" });
+Student.belongsTo(Class, { foreignKey: "class_id" });
 
 export default Student;

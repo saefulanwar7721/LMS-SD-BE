@@ -1,12 +1,12 @@
-// src/controllers/authSuperAdminController.ts
+// src/controllers/auth/authSuperAdminController.ts
 import { Request, Response } from "express";
-import SuperAdmin from "../models/SuperAdmin";
+import SuperAdmin from "../../models/SuperAdmin";
 import {
   hashPassword,
   comparePassword,
   generateAccessToken,
   generateRefreshToken,
-} from "../utils/auth";
+} from "../../utils/auth";
 
 // 🚀 Register Super Admin Pertama (kalau belum ada super admin sama sekali)
 export const registerSuperAdmin = async (

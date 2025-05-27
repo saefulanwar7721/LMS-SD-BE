@@ -1,36 +1,38 @@
-// src/controllers/authParentController.ts
+// src/controllers/auth/authStudentController.ts
 import { Request, Response } from "express";
-import User from "../models/User";
-import Parent from "../models/Parent";
+import User from "../../models/User";
+import Student from "../../models/Student";
+import School from "../../models/School";
 import {
   hashPassword,
   comparePassword,
   generateAccessToken,
   generateRefreshToken,
-} from "../utils/auth";
-import School from "../models/School";
-import Student from "../models/Student";
+} from "../../utils/auth";
+import Class from "../../models/Class";
 
-// 🚀 Register Parent (hanya bisa dilakukan oleh admin sekolah)
-export const registerParent = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
+// 🚀 Register Student (hanya bisa dilakukan oleh admin)
+export const registerStudent = async (req: Request, res: Response) => {
   try {
-    const { school_id, name, email, password, student_id, relationship } =
-      req.body;
+    const {
+      school_id,
+      name,
+      email,
+      password,
+      nisn,
+      gender,
+      birth_date,
+      class_id,
+    } = req.body;
+    const kelas = await Class.findByPk(class_id);
+    if (!kelas) {
+      res.status(404).json({ message: "Kelas tidak ditemukan" });
+      return;
+    }
 
     const school = await School.findByPk(school_id);
     if (!school) {
       res.status(404).json({ message: "Sekolah tidak ditemukan" });
-      return;
-    }
-
-    const student = await Student.findOne({
-      where: { id: student_id, school_id },
-    });
-    if (!student) {
-      res.status(404).json({ message: "Siswa tidak ditemukan di sekolah ini" });
       return;
     }
 
@@ -43,55 +45,55 @@ export const registerParent = async (
     const password_hash = await hashPassword(password);
     const newUser = await User.create({
       school_id,
-      role: "orang_tua",
+      role: "siswa",
       name,
       email,
       password_hash,
     });
 
-    const newParent = await Parent.create({
+    const newStudent = await Student.create({
       school_id,
       user_id: newUser.id,
-      student_id,
-      relationship: relationship || "wali",
+      nisn,
+      gender,
+      birth_date,
+      class_id,
     });
 
     // 🔐 Generate access token & refresh token
     const accessToken = generateAccessToken({
       id: newUser.id,
-      role: "orang_tua",
+      role: "siswa",
       school_id,
     });
     const { token: refreshToken, tokenId } = generateRefreshToken({
       id: newUser.id,
-      role: "orang_tua",
+      role: "siswa",
       school_id,
     });
 
     res.status(201).json({
-      message: "Parent berhasil didaftarkan",
-      parent: newParent,
+      message: "Siswa berhasil didaftarkan",
+      student: newStudent,
       accessToken,
       refreshToken,
     });
   } catch (err) {
-    console.error("Register Parent Error:", err);
-    res.status(500).json({ message: "Gagal mendaftarkan parent", error: err });
+    console.error("Register Student Error:", err);
+    res.status(500).json({ message: "Gagal mendaftarkan siswa", error: err });
   }
 };
 
-// 🔐 Login Parent
-export const loginParent = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
+// 🔐 Login Student
+export const loginStudent = async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
 
     const user = await User.findOne({
-      where: { email, role: "orang_tua" },
-      include: [{ model: Parent, as: "Parent" }],
+      where: { email, role: "siswa" },
+      include: [{ model: Student, as: "Student" }],
     });
+
     if (!user || !user.password_hash) {
       res.status(401).json({ message: "Email atau password salah" });
       return;
@@ -115,15 +117,15 @@ export const loginParent = async (
       school_id: user.school_id,
     });
 
-    const parent = (user as any).Parent;
+    const student = (user as any).Student;
     res.json({
-      message: "Login parent sukses",
+      message: "Login siswa sukses",
       accessToken,
       refreshToken,
-      parent,
+      student,
     });
   } catch (err) {
-    console.error("Login Parent Error:", err);
-    res.status(500).json({ message: "Login parent gagal", error: err });
+    console.error("Login Student Error:", err);
+    res.status(500).json({ message: "Login siswa gagal", error: err });
   }
 };
