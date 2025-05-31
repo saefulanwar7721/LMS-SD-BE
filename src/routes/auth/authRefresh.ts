@@ -1,9 +1,13 @@
-//src/routes/auth/authRefresh.ts
+// src/routes/auth/authRefresh.ts
 import express from "express";
-import { refreshAccessToken } from "../../controllers/auth/authRefreshController";
+import {
+  refreshAccessToken,
+  logout,
+} from "../../controllers/auth/authRefreshController";
 
 const router = express.Router();
 
-router.post("/refresh", refreshAccessToken);
+router.post("/refresh", refreshAccessToken); // ♻️ Token Refresh
+router.post("/logout", logout); // 🚪 Logout
 
 export default router;

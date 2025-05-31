@@ -8,6 +8,7 @@ import Parent from "./Parent";
 import Admin from "./Admin";
 import SuperAdmin from "./SuperAdmin";
 import Class from "./Class";
+import RefreshToken from "./RefreshToken";
 
 const db = {
   School,
@@ -19,6 +20,7 @@ const db = {
   Admin,
   SuperAdmin,
   Class,
+  RefreshToken,
 };
 
 export default db;

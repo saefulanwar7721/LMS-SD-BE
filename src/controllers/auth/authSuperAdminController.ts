@@ -6,7 +6,9 @@ import {
   comparePassword,
   generateAccessToken,
   generateRefreshToken,
+  hashToken,
 } from "../../utils/auth";
+import db from "../../models";
 
 // 🚀 Register Super Admin Pertama (kalau belum ada super admin sama sekali)
 export const registerSuperAdmin = async (
@@ -36,6 +38,15 @@ export const registerSuperAdmin = async (
     const { token: refreshToken, tokenId } = generateRefreshToken({
       id: superAdmin.id,
       role: "superadmin",
+    });
+
+    // 🧠 Simpan refresh token ke DB
+    const tokenHash = hashToken(tokenId);
+    await db.RefreshToken.create({
+      user_id: superAdmin.id,
+      token_id: tokenId,
+      token_hash: tokenHash,
+      expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 hari
     });
 
     res.status(201).json({
@@ -79,6 +90,15 @@ export const loginSuperAdmin = async (
     const { token: refreshToken, tokenId } = generateRefreshToken({
       id: user.id,
       role: "superadmin",
+    });
+
+    // 🧠 Simpan refresh token ke DB
+    const tokenHash = hashToken(tokenId);
+    await db.RefreshToken.create({
+      user_id: user.id,
+      token_id: tokenId,
+      token_hash: tokenHash,
+      expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
     });
 
     res.json({
